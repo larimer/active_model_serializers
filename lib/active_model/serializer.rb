@@ -442,8 +442,11 @@ module ActiveModel
       serializable_hashes = (hash[key] ||= [])
 
       serializables.each do |serializable|
-        unless already_serialized.include? serializable.object
-          already_serialized[serializable.object] = true
+        target = serializable.object
+        cache_key = target.respond_to?(:key) ? target.key : target
+
+        unless already_serialized.include?(cache_key)
+          already_serialized[cache_key] = true
           serializable_hashes << serializable.serializable_hash
         end
       end
